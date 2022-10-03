@@ -26,8 +26,17 @@ Utilize function arguments to control relevant components
 ```{r import, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-mydata
+library(data.table)
+getwd()
+ca_county_demographic <- fread("/home/rstudio/PHW251_Fall2022/phuong/phw251/ca_county_demographic.csv")
+ca_county_mortality <- fread("/home/rstudio/PHW251_Fall2022/phuong/phw251/ca_county_mortality.csv")
+hcai_healthcare_construction <- fread("/home/rstudio/PHW251_Fall2022/phuong/phw251/hcai_healthcare_construction.csv")
 
+head(ca_county_demographic, 2)
+head(ca_county_mortality, 2)
+tail(hcai_healthcare_construction, 2)
+
+#Make hcai colnames lower case with gsub
 
 ```
 
@@ -52,8 +61,11 @@ mydata
 - Or any other descriptive that will be useful to the analysis
 
 ```{r description, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
 
+summary(ca_county_demographic)
 
+summary(ca_county_mortality)
+
+summary(hcai_healthcare_construction)
 
 ```

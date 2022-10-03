@@ -1,5 +1,4 @@
 # phw251
-Graduate school group project 
 
 ### Scenario 1: Hospital Funding and Health Equity
 You are a researcher in the California Department of Public Health Office of Health Equity (OHE).  A policy has just been created to fund a public-private partnership for healthcare facility improvement in rural areas of California that have received minimal funding from the Department of Health Care Access and Information (HCAI) over the past 5 years. You are tasked with exploring and evaluating which 5 counties are the best targets for the development fund proposals. There are multiple components to this request.
@@ -12,8 +11,8 @@ Finally, you must locate the most recent account of HCAI fundingLinks to an exte
 
 Using these three data sources together, you must identify the 5 counties in which to recommend for the development funding partnerships. (Note, there is not a single right answer as to how counties are selected, rather it is important that you can defend how and why you selected them). To support your recommendation, you will create a print quality table and data visualization to bring to the next OHE business strategy meeting and explain why these particular top 5 counties should be selected for development funding partnerships.
 
-Data Sources:
+### Data Sources:
 PHW251 Project Data RepoLinks to an external site.
-hcai_healthcare_construction.csvLinks to an external site. (original source: https://data.ca.gov/dataset/total-construction-cost-of-healthcare-projectsLinks to an external site.)
-ca_county_mortality.csvLinks to an external site. (original source: https://data.ca.gov/dataset/death-profiles-by-countyLinks to an external site.)
-ca_county_demographics.csvLinks to an external site. 
+- hcai_healthcare_construction.csvLinks to an external site. (original source: https://data.ca.gov/dataset/total-construction-cost-of-healthcare-projectsLinks to an external site.)
+- ca_county_mortality.csvLinks to an external site. (original source: https://data.ca.gov/dataset/death-profiles-by-countyLinks to an external site.)
+- ca_county_demographics.csvLinks to an external site. 

@@ -38,6 +38,39 @@ tail(hcai_healthcare_construction, 2)
 
 #Make hcai colnames lower case with gsub
 
+#reshape ca_county_mortality then merge these two datasets
+
+# data <- merge(ca_county_demographic, ca_county_mortality)
+
+#remove spaces and column names to_lower for hcai
+#split the county column and remove spaces and "-"
+
+
+#  data2 %>% 
+#  dplyr::rename(location = `Location information`) %>%
+#  dplyr::rename_with(~ tolower(gsub(" ", "_", .x, fixed = TRUE))) %>% 
+#  dplyr::mutate(
+#    measure = if_else(
+#      location %in% c("Colorado", "New York", "Hawaii"),
+#      "imperial",
+#      "metric"
+#    ), 
+#    bmi = if_else(
+#      measure == "imperial", 
+#      (703 * data2$weight) / (data2$height ^ 2), 
+#      data2$weight / (data2$height ^ 2)
+#  ),
+#  bmi_var = case_when(
+#      bmi < 18.5 ~ "underweight",
+#      bmi < 24.9 & bmi >= 18.5 ~ "normal",
+#      bmi < 29.9 & bmi >= 25.0 ~ "overweight",
+#      bmi >= 30 ~ "obese"
+#    )
+#  ) %>%
+#  arrange(desc(bmi)) #%>% select(location, gender)
+
+# head(t, 3)
+
 ```
 
 \newpage

@@ -26,6 +26,7 @@ Utilize function arguments to control relevant components
 ```{r import, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
+mydata
 
 
 ```

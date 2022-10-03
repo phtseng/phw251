@@ -1,7 +1,7 @@
 # phw251
 Graduate school group project 
 
-Scenario 1: Hospital Funding and Health Equity
+### Scenario 1: Hospital Funding and Health Equity
 You are a researcher in the California Department of Public Health Office of Health Equity (OHE).  A policy has just been created to fund a public-private partnership for healthcare facility improvement in rural areas of California that have received minimal funding from the Department of Health Care Access and Information (HCAI) over the past 5 years. You are tasked with exploring and evaluating which 5 counties are the best targets for the development fund proposals. There are multiple components to this request.
 
 First, OHE would like you to focus on rural areas, non-homeowners, and aging individuals as populations of interest in your analysis. Your task is to explore the California county census demographic dataLinks to an external site. and begin to identify counties that share three common attributes: low population per square mile `pop12_sqmi1`, high median age `med_age`, a high proportion of renters vs. homeowners (you may need to create a new variable for this third criteria). 

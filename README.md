@@ -1,4 +1,5 @@
-# phw251
+# PHW251 Group S
+Phuong Tseng & Carrie Beshears
 
 ### Scenario 1: Hospital Funding and Health Equity
 You are a researcher in the California Department of Public Health Office of Health Equity (OHE).  A policy has just been created to fund a public-private partnership for healthcare facility improvement in rural areas of California that have received minimal funding from the Department of Health Care Access and Information (HCAI) over the past 5 years. You are tasked with exploring and evaluating which 5 counties are the best targets for the development fund proposals. There are multiple components to this request.

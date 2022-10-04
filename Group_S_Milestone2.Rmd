@@ -1,0 +1,104 @@
+---
+title: "Group S: Milestone #2"
+author: "PhuongTseng & Carri Beshears"
+date: '2022-10-02'
+output: pdf_document
+---
+
+This is a team assignment; each team should complete and turn in a PDF created 
+from an Rmd via Github. Please include code and output for the following components:
+
+## Description of dataset
+What is the data source? (1-2 sentences on where the data is coming from, dates included, etc.)
+How does the dataset relate to the group problem statement and question?
+
+ANSWER: This project will use 3 datasets to identify 5 California counties for additional funding for healthcare facility improvementent. First, information from the 2012 California county census will be reviewed to to isolate counties in rural areas, with residents of a high median age, and with a high proportion of renters over homeowners. Next, mortaility surviellance data will be used to determine mortality from chronic conditions will be aggregated by county for the years 2014-2020. Finally, HCAI data will be used to account for current healthcare funding by county from 2014-2020. All of these data sets are avaliable from the CA.gov open data portal. 
+
+## Import statement
+NOTE: Please use datasets available in the PHW251 Project Data github repoLinks to an external site. 
+(This is important to make sure everyone is using the same datasets)
+
+Use appropriate import function and package based on the type of file
+Utilize function arguments to control relevant components 
+(i.e. change column types, column names, missing values, etc.)
+
+#### Document the import process
+```{r import, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(data.table)
+getwd()
+ca_county_demographic <- fread("/home/rstudio/PHW251_Fall2022/phuong/phw251/ca_county_demographic.csv")
+ca_county_mortality <- fread("/home/rstudio/PHW251_Fall2022/phuong/phw251/ca_county_mortality.csv")
+hcai_healthcare_construction <- fread("/home/rstudio/PHW251_Fall2022/phuong/phw251/hcai_healthcare_construction.csv")
+
+head(ca_county_demographic, 2)
+head(ca_county_mortality, 2)
+tail(hcai_healthcare_construction, 2)
+
+#Make hcai colnames lower case with gsub
+
+#reshape ca_county_mortality then merge these two datasets
+
+# data <- merge(ca_county_demographic, ca_county_mortality)
+
+#remove spaces and column names to_lower for hcai
+#split the county column and remove spaces and "-"
+
+
+#  data2 %>% 
+#  dplyr::rename(location = `Location information`) %>%
+#  dplyr::rename_with(~ tolower(gsub(" ", "_", .x, fixed = TRUE))) %>% 
+#  dplyr::mutate(
+#    measure = if_else(
+#      location %in% c("Colorado", "New York", "Hawaii"),
+#      "imperial",
+#      "metric"
+#    ), 
+#    bmi = if_else(
+#      measure == "imperial", 
+#      (703 * data2$weight) / (data2$height ^ 2), 
+#      data2$weight / (data2$height ^ 2)
+#  ),
+#  bmi_var = case_when(
+#      bmi < 18.5 ~ "underweight",
+#      bmi < 24.9 & bmi >= 18.5 ~ "normal",
+#      bmi < 29.9 & bmi >= 25.0 ~ "overweight",
+#      bmi >= 30 ~ "obese"
+#    )
+#  ) %>%
+#  arrange(desc(bmi)) #%>% select(location, gender)
+
+# head(t, 3)
+
+```
+
+\newpage
+
+#### Identify data types for 5+ data elements/columns/variables
+- Identify 5+ data elements required for your specified scenario. If <5 elements are required to complete the analysis, please choose additional variables of interest in the data set to explore in this milestone.
+- Utilize functions or resources in RStudio to determine the types of each data element (i.e. character, numeric, factor)
+- Identify the desired type/format for each variable—will you need to convert any columns to numeric or another type?
+```{r data elements, include=FALSE}
+
+
+
+
+```
+
+\newpage
+
+#### Provide a basic description of the 5+ data elements
+- Numeric: mean, median, range
+- Character:  unique values/categories
+- Or any other descriptive that will be useful to the analysis
+
+```{r description, include=FALSE}
+
+summary(ca_county_demographic)
+
+summary(ca_county_mortality)
+
+summary(hcai_healthcare_construction)
+
+```

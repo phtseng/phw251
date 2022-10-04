@@ -78,7 +78,7 @@ tail(hcai_healthcare_construction, 2)
 #### Identify data types for 5+ data elements/columns/variables
 - Identify 5+ data elements required for your specified scenario. If <5 elements are required to complete the analysis, please choose additional variables of interest in the data set to explore in this milestone.
 - Utilize functions or resources in RStudio to determine the types of each data element (i.e. character, numeric, factor)
-- Identify the desired type/format for each variable—will you need to convert any columns to numeric or another type?
+- Identify the desired type/format for each variable—will you need to convert any columns to numeric or another type.
 
 ANSWER: The 5 elements that will be used for this scenario start with 2 existing variables showing population per square mile (pop12_sqmi) and median age for the 2012 California county census (med_age). 
 

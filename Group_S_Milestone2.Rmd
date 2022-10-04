@@ -12,7 +12,7 @@ from an Rmd via Github. Please include code and output for the following compone
 What is the data source? (1-2 sentences on where the data is coming from, dates included, etc.)
 How does the data set relate to the group problem statement and question?
 
-ANSWER: This project will use 3 data sets to identify 5 California counties for additional funding for healthcare facility improvement. First, information from the 2012 California county census will be reviewed to to isolate counties in rural areas, with residents of a high median age, and with a high proportion of renters over homeowners. Next, mortaility surviellance data will be used to determine mortality from chronic conditions will be aggregated by county for the years 2014-2020. Finally, HCAI data will be used to account for current healthcare funding by county from 2014-2020. All of these data sets are avaliable from the CA.gov open data portal. 
+ANSWER: This project will use 3 data sets to identify 5 California counties for additional funding for healthcare facility improvement. First, information from the 2012 California county census will be reviewed to to isolate counties in rural areas, with residents of a high median age, and with a high proportion of renters over homeowners. Next, mortaility surveillance data will be used to determine mortality from chronic conditions will be aggregated by county for the years 2014-2020. Finally, HCAI data will be used to account for current healthcare funding by county from 2014-2020. All of these data sets are avaliable from the CA.gov open data portal. 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)

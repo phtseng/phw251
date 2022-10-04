@@ -16,7 +16,6 @@ ANSWER: This project will use 3 data sets to identify 5 California counties for 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-
 library(data.table)
 library(dplyr)
 library(readr)
@@ -41,19 +40,25 @@ Utilize function arguments to control relevant components
 (i.e. change column types, column names, missing values, etc.)
 
 #### Document the import process
-```{r import, include=FALSE}
+```{r import, echo=TRUE}
 #use dplyr::select specific columns
-demog <- ca_county_demographic %>% dplyr::select(name, pop2012, pop12_sqmi, med_age, owner_occ, renter_occ)
+demog <-
+  ca_county_demographic %>% 
+  dplyr::select(name, pop2012, pop12_sqmi, med_age, owner_occ, renter_occ)
 #check first 2 records
 head(demog, 2)
 
 #use dplyr::rename_with to make column names lower case
-mortality <- ca_county_mortality %>% dplyr::rename_with(~ tolower(gsub(" ", "_", .x, fixed = TRUE)))
+mortality <-
+  ca_county_mortality %>% 
+  dplyr::rename_with( ~ tolower(gsub(" ", "_", .x, fixed = TRUE)))
 
 head(mortality, 2)
 
 #same as above and substitute a dash "_" for space
-construction <- hcai_healthcare_construction %>% dplyr::rename_with(~ tolower(gsub(" ", "_", .x, fixed = TRUE)))
+construction <-
+  hcai_healthcare_construction %>% 
+  dplyr::rename_with( ~ tolower(gsub(" ", "_", .x, fixed = TRUE)))
 #see the last 2 records
 tail(construction, 2)
 ```
@@ -68,16 +73,13 @@ tail(construction, 2)
 
 ANSWER: The 5 elements that will be used for this scenario start with 2 existing variables showing population per square mile (pop12_sqmi) and median age for the 2012 California county census (med_age). 
 
-```{r data elements, include=FALSE}
+```{r data elements, echo=TRUE}
 typeof(ca_county_demographic$pop12_sqmi)
 typeof(ca_county_demographic$med_age)
 typeof(ca_county_demographic$owner_occ)
 typeof(ca_county_demographic$renter_occ)
 typeof(ca_county_mortality$Count)
 typeof(hcai_healthcare_construction$`Total Costs of OSHPD Projects`)
-
-
-
 ```
 
 An additional variable will be created from 2 existing variables (owner_occ and renter_occ) to show the proportion of renters to homeowners. These are both currently numeric type variables and will not require a conversion. 2 additional variables will be added showing the county level mortality counts and project funding from raw data. These are both current stored at character type variables and will need to be converted to numeric type to aggregate and allow for analysis. 
@@ -89,7 +91,7 @@ An additional variable will be created from 2 existing variables (owner_occ and 
 - Character:  unique values/categories
 - Or any other descriptive that will be useful to the analysis
 
-```{r description, include=FALSE}
+```{r description, echo=TRUE}
 
 summary(ca_county_demographic$pop12_sqmi)
 summary(ca_county_demographic$med_age)

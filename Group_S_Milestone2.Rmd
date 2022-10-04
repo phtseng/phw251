@@ -14,6 +14,24 @@ How does the data set relate to the group problem statement and question?
 
 ANSWER: This project will use 3 data sets to identify 5 California counties for additional funding for healthcare facility improvement. First, information from the 2012 California county census will be reviewed to to isolate counties in rural areas, with residents of a high median age, and with a high proportion of renters over homeowners. Next, mortaility surviellance data will be used to determine mortality from chronic conditions will be aggregated by county for the years 2014-2020. Finally, HCAI data will be used to account for current healthcare funding by county from 2014-2020. All of these data sets are avaliable from the CA.gov open data portal. 
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(data.table)
+library(dplyr)
+library(readr)
+
+path <- getwd()
+setwd(path)
+
+#import demographic data
+ca_county_demographic <- fread("./ca_county_demographic.csv")
+#import mortality data
+ca_county_mortality <- fread("./ca_county_mortality.csv")
+#import healthcare construction data with fread
+hcai_healthcare_construction <- fread("./hcai_healthcare_construction.csv")
+```
+
 ## Import statement
 NOTE: Please use datasets available in the PHW251 Project Data github repoLinks to an external site. 
 (This is important to make sure everyone is using the same datasets)
@@ -24,54 +42,22 @@ Utilize function arguments to control relevant components
 
 #### Document the import process
 ```{r import, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+#use dplyr::select specific columns
+demog <- ca_county_demographic %>% dplyr::select(name, pop2012, pop12_sqmi, med_age, owner_occ, renter_occ)
+#check first 2 records
+head(demog, 2)
 
-library(data.table)
-getwd()
-ca_county_demographic <- fread("/home/rstudio/PHW251_Fall2022/phuong/phw251/ca_county_demographic.csv")
-ca_county_mortality <- fread("/home/rstudio/PHW251_Fall2022/phuong/phw251/ca_county_mortality.csv")
-hcai_healthcare_construction <- fread("/home/rstudio/PHW251_Fall2022/phuong/phw251/hcai_healthcare_construction.csv")
+#use dplyr::rename_with to make column names lower case
+mortality <- ca_county_mortality %>% dplyr::rename_with(~ tolower(gsub(" ", "_", .x, fixed = TRUE)))
 
-head(ca_county_demographic, 2)
-head(ca_county_mortality, 2)
-tail(hcai_healthcare_construction, 2)
+head(mortality, 2)
 
-#Make hcai colnames lower case with gsub
-
-#reshape ca_county_mortality then merge these two datasets
-
-# data <- merge(ca_county_demographic, ca_county_mortality)
-
-#remove spaces and column names to_lower for hcai
-#split the county column and remove spaces and "-"
-
-
-#  data2 %>% 
-#  dplyr::rename(location = `Location information`) %>%
-#  dplyr::rename_with(~ tolower(gsub(" ", "_", .x, fixed = TRUE))) %>% 
-#  dplyr::mutate(
-#    measure = if_else(
-#      location %in% c("Colorado", "New York", "Hawaii"),
-#      "imperial",
-#      "metric"
-#    ), 
-#    bmi = if_else(
-#      measure == "imperial", 
-#      (703 * data2$weight) / (data2$height ^ 2), 
-#      data2$weight / (data2$height ^ 2)
-#  ),
-#  bmi_var = case_when(
-#      bmi < 18.5 ~ "underweight",
-#      bmi < 24.9 & bmi >= 18.5 ~ "normal",
-#      bmi < 29.9 & bmi >= 25.0 ~ "overweight",
-#      bmi >= 30 ~ "obese"
-#    )
-#  ) %>%
-#  arrange(desc(bmi)) #%>% select(location, gender)
-
-# head(t, 3)
-
+#same as above and substitute a dash "_" for space
+construction <- hcai_healthcare_construction %>% dplyr::rename_with(~ tolower(gsub(" ", "_", .x, fixed = TRUE)))
+#see the last 2 records
+tail(construction, 2)
 ```
+
 
 \newpage
 

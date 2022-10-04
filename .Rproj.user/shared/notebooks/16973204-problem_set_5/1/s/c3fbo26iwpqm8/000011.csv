@@ -1,0 +1,17 @@
+"0","bll_nyc_rate <- bll_nyc %>% mutate(
+    Borough = case_when(
+      borough_id == 1 ~ ""Bronx"",
+      borough_id == 2 ~ ""Brooklyn"",
+      borough_id == 3 ~ ""Manhattan"",
+      borough_id == 4 ~ ""Queens"",
+      borough_id == 5 ~ ""Staten Island"")) %>% 
+  rename(Year = time_period) %>%
+  group_by(Year, Borough) %>%
+  summarize(""BLL > 5ug/DL"" = bll_5/1000,
+            ""BLL > 10ug/DL"" = bll_10/1000,
+            ""BLL > 15ug/DL"" = bll_15/1000) %>%
+  select(Borough, Year, ""BLL > 5ug/DL"", ""BLL > 10ug/DL"", ""BLL > 15ug/DL"")
+"
+"1","[38;5;255m`summarise()` has grouped output by 'Year', 'Borough'. You can override using
+the `.groups` argument.[39m
+"

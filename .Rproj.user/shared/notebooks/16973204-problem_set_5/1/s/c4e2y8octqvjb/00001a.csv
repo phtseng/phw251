@@ -1,0 +1,14 @@
+"0","bll_nyc_cal <- bll_nyc_filter %>% 
+  group_by(Borough, time_period) %>% 
+  filter(bll_5 > 5 | bll_5 > 10 | bll_5 > 15) %>%
+  summarize(sum_children = sum(total_tested))
+"
+"1","[38;5;255m`summarise()` has grouped output by 'Borough'. You can override using the `.groups` argument.[39m
+"
+"0","bll_nyc_cal <- bll_nyc_filter %>% "
+"0","  group_by(Borough, time_period) %>% "
+"0","  filter(bll_5 > 5 | bll_5 > 10 | bll_5 > 15) %>%"
+"0","  summarize(sum_children = sum(total_tested))"
+"1","[38;5;255m`summarise()` has grouped output by 'Borough'. You can override using the `.groups` argument.[39m
+"
+"0","head(bll_nyc_cal,2)"

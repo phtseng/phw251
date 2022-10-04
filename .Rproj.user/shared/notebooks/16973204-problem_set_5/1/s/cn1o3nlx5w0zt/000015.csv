@@ -1,0 +1,7 @@
+"0","my_data2 <- pivot_long_ex %>% 
+  group_by(cheese) %>% 
+  dplyr::summarize(mean_time = mean(time), stdev_time = (time))
+"
+"1","[38;5;255m`summarise()` has grouped output by 'cheese'.
+You can override using the `.groups` argument.[39m
+"

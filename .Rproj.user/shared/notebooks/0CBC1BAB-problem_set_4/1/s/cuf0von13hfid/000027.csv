@@ -1,0 +1,2 @@
+"0","colnames(data) <- c(""location"", ""gender"", ""height"", ""weight"")"
+"0","head(data, 3)"

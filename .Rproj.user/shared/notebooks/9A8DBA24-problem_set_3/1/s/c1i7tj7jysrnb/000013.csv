@@ -1,0 +1,7 @@
+"0","#Find the path of the csv file then read in the file. Since I already did this, I commented it out
+#file_path_csv <-  ""~/PHW251_Fall2022/problem sets/problem set 3/data/stds-by-disease-county-year-sex.csv""
+data <- read_csv(file_path_csv, , skip = 3, show_col_types = FALSE, stringsAsFactor = FALSE)
+"
+"2","Error in read_csv(file_path_csv, , skip = 3, show_col_types = FALSE, stringsAsFactor = FALSE) : 
+  unused argument (stringsAsFactor = FALSE)
+"

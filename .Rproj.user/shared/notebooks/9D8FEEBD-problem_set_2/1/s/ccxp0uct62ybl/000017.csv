@@ -1,0 +1,7 @@
+"0","# read in the csv file and save it as a data frame in the environment"
+"0","co2 <- read.csv(file = ""co2_mm_mlo.csv"", skip = 51, header = TRUE, row.names = NULL)"
+"0","# label the columns"
+"0","colnames(co2) <- c(""year"",""month"",""date"",""average"",""interpolated"",""trend"",""ndays"")"
+"0","# display the data graphically"
+"0","plot(x = co2$date, y = co2$average, pch = 20, cex = 0.1, "
+"0","     xlab = ""Date"", ylab = ""Average CO2 (ppm)"")"

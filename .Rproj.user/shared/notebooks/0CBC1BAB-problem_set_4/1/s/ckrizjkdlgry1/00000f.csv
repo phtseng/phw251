@@ -1,0 +1,3 @@
+"0","test <- dplyr::select(df, location, gender)"
+"0","#test2 <- dplyr::select(df, -height, -weight, -bmi)"
+"0",""

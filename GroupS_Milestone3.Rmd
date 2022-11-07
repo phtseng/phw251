@@ -6,7 +6,10 @@ output:
   html_document:
     df_print: paged
 ---
-# Clean dataset with descriptive statistics for relevant data elements
+
+# Scenario 1: Hospital Funding and Health Equity
+
+You are a researcher in the California Department of Public Health Office of Health Equity (OHE).  A policy has just been created to fund a public-private partnership for healthcare facility improvement in rural areas of California that have received minimal funding from the Department of Health Care Access and Information (HCAI) over the past 5 years. You are tasked with exploring and evaluating which 5 counties are the best targets for the development fund proposals. There are multiple components to this request.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -23,16 +26,28 @@ ca_county_demographic <- fread("./ca_county_demographic.csv")
 ca_county_mortality <- fread("./ca_county_mortality.csv")
 #import healthcare construction data with fread
 hcai_healthcare_construction <- fread("./hcai_healthcare_construction.csv")
-
-
 ```
 
-#### Document the import process
+First, OHE would like you to focus on rural areas, non-homeowners, and aging individuals as populations of interest in your analysis. Your task is to explore the California county census demographic dataLinks to an external site and begin to identify counties that share three common attributes: 
+
+1) low population per square mile `pop12_sqmi1`,  
+2) high median age `med_age`,  
+3) a high proportion of renters vs. homeowners (you may need to create a new variable for this third criteria). 
+
+#### Subset rows or columns, as needed
+- Create new variables needed for analysis (minimum 2)
+  - New variables should be created based on existing columns; for example
+    - Calculating a rate
+    - Combining character strings
+  - If no new values are needed for final tables/graphs, please create 2 new variables anyway
+  
+According to <https://www.ppic.org/publication/californias-population/> and the U.S. Census, California's median age in 2020 is 37.3, therefore, anything above 37 will be considered as above the median age. 
 ```{r import, echo=TRUE}
-#use dplyr::select specific columns
 demog <-
-  ca_county_demographic %>% 
-  dplyr::select(name, pop2012, pop12_sqmi, med_age, owner_occ, renter_occ)
+  ca_county_demographic %>%
+  dplyr::select(name, pop2012, pop12_sqmi, med_age, owner_occ, renter_occ) %>% 
+          mutate(prop_rent_own = round((renter_occ/(renter_occ + owner_occ)),2),
+                 high_p_renters = renter_occ > owner_occ, high_med_age = med_age > 37)
 
 #check first 2 records
 head(demog, 2)
@@ -52,12 +67,7 @@ construction <-
 tail(construction, 2)
 ```
 
-#### Subset rows or columns, as needed
-- Create new variables needed for analysis (minimum 2)
-  - New variables should be created based on existing columns; for example
-    - Calculating a rate
-    - Combining character strings
-  - If no new values are needed for final tables/graphs, please create 2 new variables anyway
+
   
 Using our 3 vectors:  
 1) ca_county_demographic  

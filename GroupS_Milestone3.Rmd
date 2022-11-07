@@ -2,18 +2,54 @@
 title: "GroupS_Milestone3"
 author: "PhuongTseng"
 date: '2022-11-07'
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 ---
-
-
-## Clean dataset with descriptive statistics for relevant data elements
+# Clean dataset with descriptive statistics for relevant data elements
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+path <- "/home/rstudio/PHW251_Fall2022/phw251"
+setwd(path)
 
+library(readr)
+library(data.table)
+library(tidyverse)
+
+#import demographic data
 ca_county_demographic <- fread("./ca_county_demographic.csv")
+#import mortality data
+ca_county_mortality <- fread("./ca_county_mortality.csv")
+#import healthcare construction data with fread
+hcai_healthcare_construction <- fread("./hcai_healthcare_construction.csv")
 
 
+```
+
+#### Document the import process
+```{r import, echo=TRUE}
+#use dplyr::select specific columns
+demog <-
+  ca_county_demographic %>% 
+  dplyr::select(name, pop2012, pop12_sqmi, med_age, owner_occ, renter_occ)
+
+#check first 2 records
+head(demog, 2)
+
+#use dplyr::rename_with to make column names lower case
+mortality <-
+  ca_county_mortality %>% 
+  dplyr::rename_with( ~ tolower(gsub(" ", "_", .x, fixed = TRUE)))
+
+head(mortality, 2)
+
+#same as above and substitute a dash "_" for space
+construction <-
+  hcai_healthcare_construction %>% 
+  dplyr::rename_with( ~ tolower(gsub(" ", "_", .x, fixed = TRUE)))
+#see the last 2 records
+tail(construction, 2)
 ```
 
 #### Subset rows or columns, as needed

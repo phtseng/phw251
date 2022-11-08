@@ -51,69 +51,87 @@ Milestone 3 Criteria: Subset rows or columns as needed
 demog <-
   ca_county_demographic %>%
   dplyr::select(name, pop2012, pop12_sqmi, med_age, owner_occ, renter_occ) %>% 
-          mutate(prop_rent_own = round((renter_occ/(renter_occ + owner_occ)),2),
-                 high_p_renters = renter_occ > owner_occ, high_med_age = med_age > 37)
+          mutate(pop12_sqmi1 = if_else(pop12_sqmi <= 100, "low", "not low"),
+                 prop_rent_own = round((renter_occ/(renter_occ + owner_occ)),2),
+                 high_p_renters = 
+                   renter_occ > owner_occ, high_med_age = med_age > 37) %>%
+          rename(county = name)
 
 #check first 2 records
 head(demog, 2)
 ```
-
-
-
-```{r import, echo=TRUE}
-demog <-
-  ca_county_demographic %>%
-  dplyr::select(name, pop2012, pop12_sqmi, med_age, owner_occ, renter_occ) %>% 
-          mutate(prop_rent_own = round((renter_occ/(renter_occ + owner_occ)),2),
-                 high_p_renters = renter_occ > owner_occ, high_med_age = med_age > 37)
-
-#check first 2 records
-head(demog, 2)
-
-#use dplyr::rename_with to make column names lower case
-mortality <-
-  ca_county_mortality %>% 
-  dplyr::rename_with( ~ tolower(gsub(" ", "_", .x, fixed = TRUE)))
-
-head(mortality, 2)
-
-#same as above and substitute a dash "_" for space
-construction <-
-  hcai_healthcare_construction %>% 
-  dplyr::rename_with( ~ tolower(gsub(" ", "_", .x, fixed = TRUE)))
-#see the last 2 records
-tail(construction, 2)
-```
-
-
-  
-Using our 3 vectors:  
-1) ca_county_demographic  
-2) ca_county_mortality  
-3) hcai_healthcare_construction  
-  
-```{r subset, eval=FALSE, include=FALSE}
-
-ca_county_demographic
-
-ca_county_mortality
-
-hcai_healthcare_construction
-
-
-
-```
-
 #### Clean variables needed for analysis (minimum 2)
   - Examples
     - Recode invalid values
     - Handle missing fields
     - Recode categories
   - If not needed for final analysis, please create at least 2 new variables anyway
+
+```{r attributes 2, echo=TRUE}
+#use dplyr::rename_with to make column names lower case
+mortality <-
+  ca_county_mortality %>%
+  dplyr::rename_with(~ tolower(gsub(" ", "_", .x, fixed = TRUE))) %>%
+  mutate(count = na_if(count, 0), 
+         annotation_code = na_if(annotation_code, 0),
+         annotation_desc = na_if(annotation_desc, "NA"))
+
+mortality$count[is.na(mortality$count)] <- 0
+mortality$annotation_code[is.na(mortality$annotation_code)] <- 0
+mortality$annotation_desc[is.na(mortality$annotation_desc)] <- "NA"
+
   
-```{r}
+mortality2 <- mortality %>%
+  group_by(county
+           #,
+           #geography_type,
+           #strata,
+           #strata_name,
+           #cause,
+           #cause_desc,
+           #annotation_code,
+           #annotation_desc
+           ) %>% 
+  summarize(totalcount = sum(count)) %>% 
+  rename(countmortality = totalcount)
 
 
+#mortality_wide <- mortality2 %>% 
+#  pivot_wider(names_from = year, values_from = count) 
+
+#same as above and substitute a dash "_" for space
+hcai <-
+  hcai_healthcare_construction %>% 
+  dplyr::rename_with( ~ tolower(gsub(" ", "_", .x, fixed = TRUE))) %>% 
+  mutate(collection_of_counties = na_if(collection_of_counties, "NA"))
+
+library(lubridate)
+hcai$data_generation_date <- ymd(hcai$data_generation_date)
+class(hcai$data_generation_date) #date
+
+hcai2 <- hcai %>% separate(county, c('county_code', 'county'), sep = " - ") %>% mutate(total_costs_of_oshpd_projects = as.character(gsub("[\\$,]", "", hcai$total_costs_of_oshpd_projects)))
+
+hcai3 <-  hcai2 %>%
+  group_by(county
+           #,
+           #geography_type,
+           #strata,
+           #strata_name,
+           #cause,
+           #cause_desc,
+           #annotation_code,
+           #annotation_desc
+           ) %>% 
+  mutate(total_costs_of_oshpd_projects = 
+           as.numeric(total_costs_of_oshpd_projects)) %>% 
+  summarize(totalcosts = sum(total_costs_of_oshpd_projects))
+
+merge_df <- merge(mortality2, demog, by="county")
+merge_df2 <- merge(merge_df, hcai3, by = "county")
+#hcai <- as.data.frame(hcai) %>% 
+#  separate(hcai$county, c("test", "test1"), " - ")
+
+tail(merge_df2)
 ```
 
 #### Data dictionary based on clean dataset (minimum 4 data elements), including:
@@ -121,14 +139,16 @@ hcai_healthcare_construction
   - Data type
   - Description
   
-```{r}
-
+```{r data dictionary}
+dictionary <- data.frame(columns = c(rownames(merge_df2)), type = c(typeof(merge_df2)))
+View(dictionary)
 
 ```
 
 #### One or more tables with descriptive statistics for 4 data element
 ```{r}
-
+library(kableExtra)
+kable(merge_df2)
 
 ```
 
@@ -136,9 +156,4 @@ hcai_healthcare_construction
   - Each part of the milestone is clearly on one page (use \newpage to push to a new page)
   - Only the necessary information is outputted (you should suppress, for example, entire data frame outputs)
   - Use of headers and sub headers to create an organized document
-
-```{r}
-
-
-```
 

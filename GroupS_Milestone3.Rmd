@@ -1,6 +1,6 @@
 ---
 title: "GroupS_Milestone3"
-author: "PhuongTseng"
+author: "PhuongTseng & Carri Beshears"
 date: '2022-11-07'
 output:
   pdf_document: default
@@ -28,6 +28,7 @@ ca_county_mortality <- fread("./ca_county_mortality.csv")
 #import healthcare construction data with fread
 hcai_healthcare_construction <- fread("./hcai_healthcare_construction.csv")
 ```
+\newpage
 
 First, OHE would like you to focus on rural areas, non-homeowners, and aging individuals as populations of interest in your analysis. Your task is to explore the California county census demographic dataLinks to an external site and begin to identify counties that share three common attributes: 
 
@@ -60,6 +61,8 @@ demog <-
 #check first 2 records
 head(demog, 2)
 ```
+\newpage
+
 #### Clean variables needed for analysis (minimum 2)
   - Examples
     - Recode invalid values
@@ -109,7 +112,9 @@ library(lubridate)
 hcai$data_generation_date <- ymd(hcai$data_generation_date)
 class(hcai$data_generation_date) #date
 
-hcai2 <- hcai %>% separate(county, c('county_code', 'county'), sep = " - ") %>% mutate(total_costs_of_oshpd_projects = as.character(gsub("[\\$,]", "", hcai$total_costs_of_oshpd_projects)))
+hcai2 <- hcai %>% separate(county, c('county_code', 'county'), sep = " - ") %>% 
+  mutate(total_costs_of_oshpd_projects = 
+           as.character(gsub("[\\$,]", "", hcai$total_costs_of_oshpd_projects)))
 
 hcai3 <-  hcai2 %>%
   group_by(county
@@ -133,6 +138,7 @@ merge_df2 <- merge(merge_df, hcai3, by = "county")
 
 tail(merge_df2)
 ```
+\newpage
 
 #### Data dictionary based on clean dataset (minimum 4 data elements), including:
   - Variable name
@@ -140,16 +146,58 @@ tail(merge_df2)
   - Description
   
 ```{r data dictionary}
-dictionary <- data.frame(columns = c(rownames(merge_df2)), type = c(typeof(merge_df2)))
-View(dictionary)
+library(kableExtra)
+dictionary <- data.frame(
+  columns = c(colnames(merge_df2)),
+  type = c(
+    "character" ,
+    "numeric" ,
+    "numeric",
+    "numeric" ,
+    "numeric",
+    "numeric" ,
+    "numeric",
+    "character" ,
+    "numeric" ,
+    "boolean" ,
+    "boolean",
+    "numeric"
+  ),
+  description = c(
+    "names of county", 
+    "count of mortality",
+    "population in 2012",
+    "population in 2012 per square mile",
+    "median age",
+    "owner occupied households",
+    "renter occupied households",
+    "population in 2012 per square mile with less than 100 persons per sqm",
+    "proportion of renters versus owners",
+    "high proportion of renters",
+    "median age above 37 years old is considered as high median age",
+    "total costs of oshpd project"))
+```
+
+\newpage
+
+```{r dictionary 2}
+kable(dictionary)
+#kable(head(merge_df2, 5), format = "html", caption = "Dataset")
+```
+\newpage
+
+
+```{r kable1}
+kable(merge_df2)
 
 ```
 
-#### One or more tables with descriptive statistics for 4 data element
-```{r}
-library(kableExtra)
-kable(merge_df2)
+\newpage
 
+```{r descriptive}
+library(kableExtra)
+kable(summary(merge_df2))
+summary(merge_df2)
 ```
 
 #### PDF that is professionally prepared for presentation

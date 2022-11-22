@@ -183,7 +183,7 @@ pi == ptolemy_pi
 
 ### Question 9
 Use an if/else statement to print out "greater than 1" if the odds of becoming ill due to cheesecake (from question 4) is higher than 1.0. Print "not greater than 1" if the odds are not higher than 1.0.
-```{r question_9}
+```{r question_9, eval=FALSE, include=FALSE}
 # your code here
 x <- myresult #0.5787037
 x
@@ -192,6 +192,12 @@ print("greater than 1")
 } else {
 print("not greater than 1")
 }
+
+# Pulled from Course Solution - using the dplyr function if_else
+library(dplyr)
+if_else(condition = odds_ratio > 1,
+        true = "greater than 1",
+        false = "not greater than 1")
 ```
 
 

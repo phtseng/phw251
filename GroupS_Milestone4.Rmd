@@ -1,0 +1,105 @@
+---
+title: "Groups_Milestone4"
+author: "PhuongTseng & Carri Beshears"
+date: '2022-11-22'
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+# Scenario 1: Hospital Funding and Health Equity
+
+You are a researcher in the California Department of Public Health Office of Health Equity (OHE).  A policy has just been created to fund a public-private partnership for healthcare facility improvement in rural areas of California that have received minimal funding from the Department of Health Care Access and Information (HCAI) over the past 5 years. You are tasked with exploring and evaluating which 5 counties are the best targets for the development fund proposals. There are multiple components to this request.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+path <- "/home/rstudio/PHW251_Fall2022/phw251"
+
+library(readr)
+library(data.table)
+library(tidyverse)
+
+#import demographic data
+ca_county_demographic <- fread("./ca_county_demographic.csv")
+#import mortality data
+ca_county_mortality <- fread("./ca_county_mortality.csv")
+#import healthcare construction data with fread
+hcai_healthcare_construction <- fread("./hcai_healthcare_construction.csv")
+```
+\newpage
+
+First, OHE would like you to focus on rural areas, non-homeowners, and aging individuals as populations of interest in your analysis. Your task is to explore the California county census demographic dataLinks to an external site and begin to identify counties that share three common attributes: 
+
+1) low population per square mile `pop12_sqmi1`,  
+According to the U.S. Census on population density <https://www.census.gov/newsroom/blogs/random-samplings/2015/03/understanding-population-density.html>, we will define low population per square mile as less 100 population per sq mile.
+
+2) high median age `med_age`,  
+According to <https://www.ppic.org/publication/californias-population/> and the U.S. Census, California's median age in 2020 is 37.3, therefore, anything above 37 will be considered as above the median age.
+
+3) a high proportion of renters vs. homeowners (you may need to create a new variable for this third criteria). 
+We're defining high proportion of renters vs. homeowners as renters over the total population of renters and owners occupied household
+
+```{r data, echo=TRUE}
+
+ca_county_demographic2<- ca_county_demographic %>% 
+  mutate("rent_pro" = ca_county_demographic$renter_occ/
+           ca_county_demographic$households *100)
+
+ca_county_mortality2 <- ca_county_mortality %>% 
+  filter(Strata_Name == "Total Population") %>% 
+  filter(Cause_Desc == "All causes (total)") %>% 
+  filter(Year == 2020) %>% filter(Geography_Type == "Occurrence") %>% 
+  rename("name" = "County") %>% select(name, Count)
+
+ca_county_dem_mort <- merge(ca_county_demographic2, ca_county_mortality2, by = "name")
+
+hcai_closure <- hcai_healthcare_construction %>% 
+  filter(`OSHPD Project Status` == "In Closure")
+hcai_closure <- hcai_closure %>% filter(rownames(hcai_closure) == 13341:13398)
+hcai_closure <- hcai_closure %>% select(County, `Total Costs of OSHPD Projects`)
+hcai_closure$name <- c("Alameda", "Alpine", "Amador", "Butte", "Calaveras", 
+                       "Colusa", "Contra Costa", "Del Norte", "El Dorado", 
+                       "Fresno", "Glenn", "Humboldt","Imperial","Inyo","Kern",
+                       "Kings","Lake",
+                       "Lassen","Los Angeles","Madera","Marin","Mariposa",
+                       "Mendocino","Merced",
+                       "Modoc","Mono",
+                       "Monterey","Napa","Nevada","Orange","Placer","Plumas",
+                       "Riverside","Sacramento","San Benito","San Bernardino",
+                       "San Diego","San Francisco","San Joaquin",
+                       "San Luis Obispo","San Mateo","Santa Barbara",
+                       "Santa Clara","Santa Cruz","Shasta",
+"Sierra","Siskiyou","Solano","Sonoma","Stanislaus","Sutter","Tehama","Trinity",
+"Tulare","Tuolumne","Ventura","Yolo","Yuba") 
+hcai_closure <- hcai_closure %>% select(name, `Total Costs of OSHPD Projects`)
+
+
+ca_county_dem_mort_prog <- merge(ca_county_dem_mort, hcai_closure, by = "name")
+ca_county_dem_mort_prog <- ca_county_dem_mort_prog %>% 
+  mutate("Mortality Rate" = ca_county_dem_mort_prog$Count/
+           ca_county_dem_mort_prog$pop2012*100)
+
+working_dataset <- ca_county_dem_mort_prog %>% filter(pop12_sqmi < 100) %>% 
+  filter(med_age > 37) %>% filter(rent_pro > 35) %>% 
+  select(name, pop12_sqmi, med_age, rent_pro, `Mortality Rate`, 
+           `Total Costs of OSHPD Projects`)
+
+working_dataset <- working_dataset %>% rename("County Name" = "name", "Pop/mi^2" = "pop12_sqmi")
+working_dataset <- working_dataset %>% 
+  rename("Median Age" = "med_age", "Renter Proportion" = "rent_pro")
+
+```
+\newpage
+
+#### Visulizations (minimum 2)
+
+  -One print quality table as requested in scenario
+  -One print quality plot or chart as requested in scenario
+  -Label visual as needed for presentation
+  -1-2 sentence interpretation
+
+```{r visuals, echo=TRUE}
+knitr::kable(working_dataset, digits = 2)
+
+
+```

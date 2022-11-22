@@ -1,0 +1,207 @@
+---
+title: "GroupS_Milestone3"
+author: "PhuongTseng & Carri Beshears"
+date: '2022-11-07'
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+# Scenario 1: Hospital Funding and Health Equity
+
+You are a researcher in the California Department of Public Health Office of Health Equity (OHE).  A policy has just been created to fund a public-private partnership for healthcare facility improvement in rural areas of California that have received minimal funding from the Department of Health Care Access and Information (HCAI) over the past 5 years. You are tasked with exploring and evaluating which 5 counties are the best targets for the development fund proposals. There are multiple components to this request.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+path <- "/home/rstudio/PHW251_Fall2022/phw251"
+setwd(path)
+
+library(readr)
+library(data.table)
+library(tidyverse)
+
+#import demographic data
+ca_county_demographic <- fread("./ca_county_demographic.csv")
+#import mortality data
+ca_county_mortality <- fread("./ca_county_mortality.csv")
+#import healthcare construction data with fread
+hcai_healthcare_construction <- fread("./hcai_healthcare_construction.csv")
+```
+\newpage
+
+First, OHE would like you to focus on rural areas, non-homeowners, and aging individuals as populations of interest in your analysis. Your task is to explore the California county census demographic dataLinks to an external site and begin to identify counties that share three common attributes: 
+
+1) low population per square mile `pop12_sqmi1`,  
+According to the U.S. Census on population density <https://www.census.gov/newsroom/blogs/random-samplings/2015/03/understanding-population-density.html>, we will define low population per square mile as less 100 population per sq mile.
+
+2) high median age `med_age`,  
+According to <https://www.ppic.org/publication/californias-population/> and the U.S. Census, California's median age in 2020 is 37.3, therefore, anything above 37 will be considered as above the median age.
+
+3) a high proportion of renters vs. homeowners (you may need to create a new variable for this third criteria). 
+We're defining high proportion of renters vs. homeowners as renters over the total population of renters and owners occupied household
+
+Milestone 3 Criteria: Subset rows or columns as needed
+- Create new variables needed for analysis (minimum 2)
+  - New variables should be created based on existing columns; for example
+    - Calculating a rate
+    - Combining character strings
+  - If no new values are needed for final tables/graphs, please create 2 new variables anyway
+
+```{r attributes, echo=TRUE}
+demog <-
+  ca_county_demographic %>%
+  dplyr::select(name, pop2012, pop12_sqmi, med_age, owner_occ, renter_occ) %>% 
+          mutate(pop12_sqmi1 = if_else(pop12_sqmi <= 100, "low", "not low"),
+                 prop_rent_own = round((renter_occ/(renter_occ + owner_occ)),2),
+                 high_p_renters = 
+                   renter_occ > owner_occ, high_med_age = med_age > 37) %>%
+          rename(county = name)
+
+#check first 2 records
+head(demog, 2)
+```
+\newpage
+
+#### Clean variables needed for analysis (minimum 2)
+  - Examples
+    - Recode invalid values
+    - Handle missing fields
+    - Recode categories
+  - If not needed for final analysis, please create at least 2 new variables anyway
+
+```{r attributes 2, echo=TRUE}
+#use dplyr::rename_with to make column names lower case
+mortality <-
+  ca_county_mortality %>%
+  dplyr::rename_with(~ tolower(gsub(" ", "_", .x, fixed = TRUE))) %>%
+  mutate(count = na_if(count, 0), 
+         annotation_code = na_if(annotation_code, 0),
+         annotation_desc = na_if(annotation_desc, "NA"))
+
+mortality$count[is.na(mortality$count)] <- 0
+mortality$annotation_code[is.na(mortality$annotation_code)] <- 0
+mortality$annotation_desc[is.na(mortality$annotation_desc)] <- "NA"
+
+  
+mortality2 <- mortality %>%
+  group_by(county
+           #,
+           #geography_type,
+           #strata,
+           #strata_name,
+           #cause,
+           #cause_desc,
+           #annotation_code,
+           #annotation_desc
+           ) %>% 
+  summarize(totalcount = sum(count)) %>% 
+  rename(countmortality = totalcount)
+
+
+#mortality_wide <- mortality2 %>% 
+#  pivot_wider(names_from = year, values_from = count) 
+
+#same as above and substitute a dash "_" for space
+hcai <-
+  hcai_healthcare_construction %>% 
+  dplyr::rename_with( ~ tolower(gsub(" ", "_", .x, fixed = TRUE))) %>% 
+  mutate(collection_of_counties = na_if(collection_of_counties, "NA"))
+
+library(lubridate)
+hcai$data_generation_date <- ymd(hcai$data_generation_date)
+class(hcai$data_generation_date) #date
+
+hcai2 <- hcai %>% separate(county, c('county_code', 'county'), sep = " - ") %>% 
+  mutate(total_costs_of_oshpd_projects = 
+           as.character(gsub("[\\$,]", "", hcai$total_costs_of_oshpd_projects)))
+
+hcai3 <-  hcai2 %>%
+  group_by(county
+           #,
+           #geography_type,
+           #strata,
+           #strata_name,
+           #cause,
+           #cause_desc,
+           #annotation_code,
+           #annotation_desc
+           ) %>% 
+  mutate(total_costs_of_oshpd_projects = 
+           as.numeric(total_costs_of_oshpd_projects)) %>% 
+  summarize(totalcosts = sum(total_costs_of_oshpd_projects))
+
+merge_df <- merge(mortality2, demog, by="county")
+merge_df2 <- merge(merge_df, hcai3, by = "county")
+#hcai <- as.data.frame(hcai) %>% 
+#  separate(hcai$county, c("test", "test1"), " - ")
+
+tail(merge_df2)
+```
+\newpage
+
+#### Data dictionary based on clean dataset (minimum 4 data elements), including:
+  - Variable name
+  - Data type
+  - Description
+  
+```{r data dictionary}
+library(kableExtra)
+dictionary <- data.frame(
+  columns = c(colnames(merge_df2)),
+  type = c(
+    "character" ,
+    "numeric" ,
+    "numeric",
+    "numeric" ,
+    "numeric",
+    "numeric" ,
+    "numeric",
+    "character" ,
+    "numeric" ,
+    "boolean" ,
+    "boolean",
+    "numeric"
+  ),
+  description = c(
+    "names of county", 
+    "count of mortality",
+    "population in 2012",
+    "population in 2012 per square mile",
+    "median age",
+    "owner occupied households",
+    "renter occupied households",
+    "population in 2012 per square mile with less than 100 persons per sqm",
+    "proportion of renters versus owners",
+    "high proportion of renters",
+    "median age above 37 years old is considered as high median age",
+    "total costs of oshpd project"))
+```
+
+\newpage
+
+```{r dictionary 2}
+kable(dictionary)
+#kable(head(merge_df2, 5), format = "html", caption = "Dataset")
+```
+\newpage
+
+
+```{r kable1}
+kable(merge_df2)
+
+```
+
+\newpage
+
+```{r descriptive}
+library(kableExtra)
+kable(summary(merge_df2))
+summary(merge_df2)
+```
+
+#### PDF that is professionally prepared for presentation
+  - Each part of the milestone is clearly on one page (use \newpage to push to a new page)
+  - Only the necessary information is outputted (you should suppress, for example, entire data frame outputs)
+  - Use of headers and sub headers to create an organized document
+

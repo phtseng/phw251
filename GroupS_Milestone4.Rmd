@@ -55,6 +55,7 @@ ca_county_dem_mort <- merge(ca_county_demographic2, ca_county_mortality2, by = "
 
 hcai_closure <- hcai_healthcare_construction %>% 
   filter(`OSHPD Project Status` == "In Closure")
+
 hcai_closure <- hcai_closure %>% filter(rownames(hcai_closure) == 13341:13398)
 hcai_closure <- hcai_closure %>% select(County, `Total Costs of OSHPD Projects`)
 hcai_closure$name <- c("Alameda", "Alpine", "Amador", "Butte", "Calaveras", 
@@ -84,7 +85,8 @@ working_dataset <- ca_county_dem_mort_prog %>% filter(pop12_sqmi < 100) %>%
   select(name, pop12_sqmi, med_age, rent_pro, `Mortality Rate`, 
            `Total Costs of OSHPD Projects`)
 
-working_dataset <- working_dataset %>% rename("County Name" = "name", "Pop/mi^2" = "pop12_sqmi")
+working_dataset <- working_dataset %>% 
+  rename("County Name" = "name", "Pop/mi^2" = "pop12_sqmi")
 working_dataset <- working_dataset %>% 
   rename("Median Age" = "med_age", "Renter Proportion" = "rent_pro")
 
@@ -103,3 +105,49 @@ knitr::kable(working_dataset, digits = 2)
 
 
 ```
+
+```{r visuals2, echo=TRUE}
+library(ggplot2)
+
+
+df <- working_dataset %>% 
+  mutate(median_age = 
+           round(`Median Age`,0), 
+            pop_mi = round(`Pop/mi^2`,2)) 
+one <- ggplot(df, 
+        aes(x = pop_mi, 
+            y = `Renter Proportion`, fill = `Median Age`)) + 
+   geom_col(position = "dodge") + 
+   theme(axis.title = element_blank(), 
+         axis.title.y = element_text()) + 
+   labs(fill = "Median Age",
+        title = "Renter Proportion by Median Age",
+        y = "Renter Proportion") + facet_wrap(~ `County Name`)
+
+one
+ 
+```
+Visual one shows Renter Proportion by County with median age as the fill/gradient so that we visibly see if any of these counties would meet the three common criteria. Humboldt and Mono populations are younger than other counties but more renters than owners. Inyo and Siskiyou have the lowest population per square mile , high median age, and a high proportion of renters making these two ideal for the development fund proposals.
+
+\newpage 
+
+```{r visuals3, echo=TRUE}
+library(tidyverse)
+
+
+two <- df %>%
+      ggplot(  aes(x = `County Name`, 
+            y = pop_mi, fill = median_age)) + 
+   geom_col(position = "dodge") + 
+   theme(axis.title = element_blank(), 
+         axis.title.y = element_text()) + 
+   labs(fill = "median age",
+        title = "How densely populated is each county by median age?",
+        y = "Population per square mile")
+
+two
+
+```
+
+
+For visual two, we are interested in looking at density of each county and we noticed that San Luis Obispo is highly populated or denser than other counties with median age of 40 followed by Shasta as the second dense county making them less ideal for the development proposal than Inyo and Siskiyou.

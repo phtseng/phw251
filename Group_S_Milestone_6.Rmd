@@ -1,0 +1,116 @@
+---
+title: "Group S Milestone 6"
+author: "Phoung Seng and Carri Beshears"
+date: '2022-12-11'
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+**Problem Statement:**
+
+  Access to Quality healthcare in rural areas of California continues to be a focus of the California Department of Public Health Office of Health Equity (OHE). Over the past 5 years the Department of Healthcare Access and Information (HCAI) has provided funding however this need continues to grow and great greater challenges for some of our communities. New policies have increased funding availability to assist in improving healthcare facilities to work with our rural populations. 
+  
+  In order to ensure that this increase of funding is used to help those populations in most need, OHE is tasked to evaluate all California counties based on the following criteria:
+  1. low population per square mile
+  2. high median age
+  3. high proportion of renters vs homeowners
+  
+Using this information, OHE has recommended which counties would be best served by development funding partnerships. 
+
+**Methods:** 
+  
+  All California counties were evaluated objectively through the analysis of three primary data sources:
+  
+  1. California County census demographics data: Information found here allowed counties to be ranked based on how well they meet the criteria outlined for this project, low population per square mile, high median age, and high proportion of renters. Current census data was used for analysis.
+  
+  2. Mortality surveillance: Information about mortality for chronic health conditions for each county was added to provide a better picture of healthcare use and access. Total mortality counts from 2020 were used for analysis. 
+  
+  3. HCAI funding: Current funding and open projects for each county is also used to help evaluate where additional funding should be allocated. Projects currently funded and "in closure" were used for analysis.
+  
+  California census data was used as the base data set for this evaluation. A new variable was added to show the proportion of renters to homeowners by taking the number of renter occupied houses over the total occupied houses in each county. Mortality data was added by separating data from 2020, giving a total count for that year for each location. Finally, HCAI funding data was sorted to identify projects that are currently "in closure" for each county, along with the monetary amount that has already been used for currently projects, allowing this to be added to the original data set as well. 
+  
+  From this new single set of information, OHE is able to analyze each county independently to be able to make recommendations of which areas would best fit the new funding partnership program.  
+
+\newpage
+
+
+```{r importing datasets, echo=FALSE, message=FALSE, warning=FALSE}
+library(readr)
+library(data.table)
+library(tidyverse)
+
+#import demographic data
+ca_county_demographic <- fread("./ca_county_demographic.csv")
+#import mortality data
+ca_county_mortality <- fread("./ca_county_mortality.csv")
+#import healthcare construction data with fread
+hcai_healthcare_construction <- fread("./hcai_healthcare_construction.csv")
+
+
+```
+
+
+
+```{r create new DF, echo=FALSE}
+
+
+ca_county_demographic2<- ca_county_demographic %>% 
+  mutate("rent_pro" = ca_county_demographic$renter_occ/
+           ca_county_demographic$households *100)
+
+ca_county_mortality2 <- ca_county_mortality %>% 
+  filter(Strata_Name == "Total Population") %>% 
+  filter(Cause_Desc == "All causes (total)") %>% 
+  filter(Year == 2020) %>% filter(Geography_Type == "Occurrence") %>% 
+  rename("name" = "County") %>% select(name, Count)
+
+ca_county_dem_mort <- merge(ca_county_demographic2, ca_county_mortality2, by = "name")
+
+hcai_closure <- hcai_healthcare_construction %>% 
+  filter(`OSHPD Project Status` == "In Closure")
+
+hcai_closure <- hcai_closure %>% filter(rownames(hcai_closure) == 13341:13398)
+hcai_closure <- hcai_closure %>% select(County, `Total Costs of OSHPD Projects`)
+hcai_closure$name <- c("Alameda", "Alpine", "Amador", "Butte", "Calaveras", 
+                       "Colusa", "Contra Costa", "Del Norte", "El Dorado", 
+                       "Fresno", "Glenn", "Humboldt","Imperial","Inyo","Kern",
+                       "Kings","Lake",
+                       "Lassen","Los Angeles","Madera","Marin","Mariposa",
+                       "Mendocino","Merced",
+                       "Modoc","Mono",
+                       "Monterey","Napa","Nevada","Orange","Placer","Plumas",
+                       "Riverside","Sacramento","San Benito","San Bernardino",
+                       "San Diego","San Francisco","San Joaquin",
+                       "San Luis Obispo","San Mateo","Santa Barbara",
+                       "Santa Clara","Santa Cruz","Shasta",
+"Sierra","Siskiyou","Solano","Sonoma","Stanislaus","Sutter","Tehama","Trinity",
+"Tulare","Tuolumne","Ventura","Yolo","Yuba") 
+hcai_closure <- hcai_closure %>% select(name, `Total Costs of OSHPD Projects`)
+
+
+ca_county_dem_mort_prog <- merge(ca_county_dem_mort, hcai_closure, by = "name")
+ca_county_dem_mort_prog <- ca_county_dem_mort_prog %>% 
+  mutate("Mortality Rate" = ca_county_dem_mort_prog$Count/
+           ca_county_dem_mort_prog$pop2012 * 100)
+
+working_dataset <- ca_county_dem_mort_prog %>% 
+    select(name, pop12_sqmi, med_age, rent_pro, `Mortality Rate`, 
+           `Total Costs of OSHPD Projects`)
+
+working_dataset <- working_dataset %>% 
+  rename("County Name" = "name", "Pop/mi^2" = "pop12_sqmi")
+working_dataset <- working_dataset %>% 
+  rename("Median Age" = "med_age", "Renter Proportion" = "rent_pro")
+
+
+```
+
+```{r table, echo=FALSE}
+
+knitr::kable(working_dataset, digits = 2, caption = "California counties by current census")
+```

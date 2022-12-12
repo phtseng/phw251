@@ -146,6 +146,20 @@ my_df <-  my_df %>%
                        pop_mi >= 500.00 & pop_mi <= 1000 ~ "500 - 1000 sqmi", 
                      TRUE ~ "> 1000 sqmi"))
 
+r <-  my_df %>% 
+  mutate(totalcosts_oshpd = gsub("\\$", "", `Total Costs of OSHPD Projects`))
+
+rr <-  r %>%  mutate(
+  totalcosts_oshpd =gsub(",", "", gsub("([a-zA-Z]),", "\\1 ", totalcosts_oshpd)), 
+  totalcosts_oshpd = as.numeric(totalcosts_oshpd))
+
+         
+my_df <-  rr %>%   mutate(totalcosts_oshpd2=case_when(
+  totalcosts_oshpd <= 100000.00 ~ "<= 100K",
+                       totalcosts_oshpd > 100000.00  & 
+                       totalcosts_oshpd <= 1000000.00 ~ "101K - 1000K", 
+                     TRUE ~ "> 100K"))
+
 new <-  ggplot(my_df, aes(y=renter_pro,x=median_age)) + 
   geom_point(aes(col = Met_v_Not)) + 
   #geom_label(aes(label=`County Name`), size=0.01)
@@ -162,12 +176,29 @@ new <-  ggplot(my_df, aes(y=renter_pro,x=median_age)) +
 new
 
 
+new2 <-  ggplot(my_df, aes(y=renter_pro,x=median_age)) + 
+  geom_point(aes(col = Met_v_Not)) + 
+  #geom_label(aes(label=`County Name`), size=0.01)
+  #geom_line(aes(group=pop_mi)) + 
+   theme(axis.title = element_blank(), 
+         axis.title.y = element_text()) + 
+   labs(#fill = "Renter Proportion",
+        title = "Counties that met the 3 criteria",
+        x = "Median Age",
+        y = "Renter Proportion") + 
+  geom_text(aes(label=`County Name`), 
+            vjust = 0.6, hjust = -0.5, size = 1) + facet_wrap(~totalcosts_oshpd2) 
+  
+new2
+
 
 ```
 
-OHE is able to analyze each county independently in this visualization to be able to make recommendations of which areas would best fit the new funding partnership program. 
+OHE is able to analyze each county independently in these visualizations to be able to make recommendations of which areas would best fit the new funding partnership program. 
 
-This visualization displays counties that met the 3 criteria: low population density, high median age > 37 years old (x-axis), and renter proportion >= 30% (y-axis). The counties that met the criteria are represented as green dots whereas the counties that did not meet these criteria are red dots. Therefore, Tuolumne, Siskiyou, Alpine, Modoc, Inyo, Lake, Mendocino, Shasta, Tehama, Del No, San Luis Obispo are counties that met these tree criteria, which make these areas a great fit for the new funding opportunities.
+The first visualization displays counties that met the 3 criteria: low population density, high median age > 37 years old (x-axis), and renter proportion >= 30% (y-axis). The counties that met the criteria are represented as green dots whereas the counties that did not meet these criteria are red dots.
+
+The second visualization shows the two criteria: high median age > 37 years old (x-axis), and renter proportion >= 30% (y-axis) and the total costs of OSHPD Projects in those counties. Therefore, Tuolumne, Siskiyou, Alpine, Modoc, Inyo, Lake, Mendocino, Shasta, Tehama, Del No, San Luis Obispo are counties that met these tree criteria, which make these areas a great fit for the new funding opportunities.
 
 
 

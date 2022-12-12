@@ -1,6 +1,6 @@
 ---
 title: "Group S Milestone 6"
-author: "Phoung Seng and Carri Beshears"
+author: "Phuong Tseng and Carri Beshears"
 date: '2022-12-11'
 output:
   pdf_document: default
@@ -114,3 +114,62 @@ working_dataset <- working_dataset %>%
 
 knitr::kable(working_dataset, digits = 2, caption = "California counties by current census")
 ```
+
+```{r visual, echo=FALSE}
+library(ggplot2)
+
+
+my_df <- working_dataset %>% 
+  mutate(median_age = 
+           round(`Median Age`,0), 
+            pop_mi = round(`Pop/mi^2`,2),
+            renter_pro = round(`Renter Proportion`,2),
+            mort_rate = round(`Mortality Rate`,2)) 
+
+test <- my_df
+my_df <-  test %>% 
+  mutate(renter_pro2 = case_when(renter_pro <= 30.00 ~ "low 0 - 30.00 ",
+          renter_pro >= 30.01 & renter_pro < 45.00 ~ "med 30.01 - 45",
+          TRUE ~ "high >= 45.01"))
+
+my_df <-  my_df %>% 
+  mutate(Met_v_Not = 
+           case_when(renter_pro >= 30.00 & 
+                       median_age > 37 & 
+                       pop_mi < 100 ~ "Met", 
+                     TRUE ~ "Did Not Meet"))
+
+
+my_df <-  my_df %>% 
+  mutate(popdensity = 
+           case_when(pop_mi <= 100.00 ~ "<= 100 sqmi",
+                       pop_mi >= 500.00 & pop_mi <= 1000 ~ "500 - 1000 sqmi", 
+                     TRUE ~ "> 1000 sqmi"))
+
+new <-  ggplot(my_df, aes(y=renter_pro,x=median_age)) + 
+  geom_point(aes(col = Met_v_Not)) + 
+  #geom_label(aes(label=`County Name`), size=0.01)
+  #geom_line(aes(group=pop_mi)) + 
+   theme(axis.title = element_blank(), 
+         axis.title.y = element_text()) + 
+   labs(#fill = "Renter Proportion",
+        title = "Counties that met the 3 criteria",
+        x = "Median Age",
+        y = "Renter Proportion") + 
+  geom_text(aes(label=`County Name`), 
+            vjust = 0.6, hjust = -0.5, size = 1) + facet_wrap(~popdensity) 
+  
+new
+
+
+
+```
+
+OHE is able to analyze each county independently in this visualization to be able to make recommendations of which areas would best fit the new funding partnership program. 
+
+This visualization displays counties that met the 3 criteria: low population density, high median age > 37 years old, and renter proportion >= 30%. The counties that met the criteria are represented as green dots whereas the counties that did not meet these criteria are red dots. Therefore, Tuolumne, Siskiyou, Alpine, Modoc, Inyo, Lake, Mendocino, Shasta, Tehama, Del No, San Luis Obispo are counties that met these tree criteria, which make these areas a great fit for the new funding opportunities.
+
+
+
+ 
+

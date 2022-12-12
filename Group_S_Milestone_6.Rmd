@@ -167,7 +167,7 @@ new
 
 OHE is able to analyze each county independently in this visualization to be able to make recommendations of which areas would best fit the new funding partnership program. 
 
-This visualization displays counties that met the 3 criteria: low population density, high median age > 37 years old, and renter proportion >= 30%. The counties that met the criteria are represented as green dots whereas the counties that did not meet these criteria are red dots. Therefore, Tuolumne, Siskiyou, Alpine, Modoc, Inyo, Lake, Mendocino, Shasta, Tehama, Del No, San Luis Obispo are counties that met these tree criteria, which make these areas a great fit for the new funding opportunities.
+This visualization displays counties that met the 3 criteria: low population density, high median age > 37 years old (x-axis), and renter proportion >= 30% (y-axis). The counties that met the criteria are represented as green dots whereas the counties that did not meet these criteria are red dots. Therefore, Tuolumne, Siskiyou, Alpine, Modoc, Inyo, Lake, Mendocino, Shasta, Tehama, Del No, San Luis Obispo are counties that met these tree criteria, which make these areas a great fit for the new funding opportunities.
 
 
 
